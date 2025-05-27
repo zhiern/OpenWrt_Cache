@@ -104,7 +104,6 @@ jobs:
 
     - name: Load Custom Configuration
       run: |
-        export CURRENT_DATE=$(date +%s)
         export LAN=${{ github.event.inputs.lan_addr }}
         [ ${{ github.event.inputs.ccache }} = 'true' ] && export BUILD_FAST=y
         [ -e files ] && mv files $OPENWRT_PATH/files
@@ -128,4 +127,15 @@ jobs:
         echo -e "$(nproc) thread compile"
         make -j$cores toolchain/compile || make -j$cores toolchain/compile V=s
         mkdir -p toolchain-cache
-        tar -I "zstd -19 -T$(nproc --all)" -cf toolchain-cache/toolchain_${toolchain_arch}_gcc-13.tar.zst ./{build_dir,dl,staging_dir,tmp}
+        tar -I "zstd -19 -T$(nproc --all)" -cf toolchain-cache/toolchain_${{ github.event.inputs.device }}_gcc-13.tar.zst ./{build_dir,dl,staging_dir,tmp}
+
+    - name: Create release
+      uses: ncipollo/release-action@v1.14.0
+      with:
+        name: openwrt-24.10
+        allowUpdates: true
+        tag: openwrt-24.10
+        commit: openwrt-24.10
+        replacesArtifacts: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: $OPENWRT_PATH/toolchain-cache/*
