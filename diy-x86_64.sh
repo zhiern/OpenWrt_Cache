@@ -12,6 +12,9 @@ export gitea=https://git.kejizero.online
 # GitHub镜像
 export github="github.com"
 
+# 下载进度条
+CURL_BAR="--progress-bar"
+
 # 使用 O2 级别的优化
 sed -i 's/Os/O2/g' include/target.mk
 
@@ -363,6 +366,10 @@ git clone https://$github/sbwml/openwrt_helloworld package/new/helloworld -b v5
 rm -rf feeds/packages/net/alist feeds/luci/applications/luci-app-alist
 git clone https://$github/sbwml/openwrt-alist package/new/alist
 
+# luci-app-sqm
+rm -rf feeds/luci/applications/luci-app-sqm
+git clone https://$github/zhiern/luci-app-sqm feeds/luci/applications/luci-app-sqm
+
 # netdata
 sed -i 's/syslog/none/g' feeds/packages/admin/netdata/files/netdata.conf
 
@@ -443,17 +450,8 @@ src/gz openwrt_routing https://mirrors.tuna.tsinghua.edu.cn/openwrt/releases/24.
 src/gz openwrt_telephony https://mirrors.tuna.tsinghua.edu.cn/openwrt/releases/24.10.1/packages/x86_64/telephony
 src/gz openwrt_core https://mirrors.tuna.tsinghua.edu.cn/openwrt/releases/24.10.1/targets/x86/64/kmods/6.6.86-1-af351158cfb5febf5155a3aa53785982
 EOF
-
-# Vermagic
-curl -s https://downloads.openwrt.org/releases/24.10.1/targets/x86/64/openwrt-24.10.1-x86-64.manifest \
-| grep "^kernel -" \
-| awk '{print $3}' \
-| sed -n 's/.*~\([a-f0-9]\+\)-r[0-9]\+/\1/p' > vermagic
-sed -i 's#grep '\''=\[ym\]'\'' \$(LINUX_DIR)/\.config\.set | LC_ALL=C sort | \$(MKHASH) md5 > \$(LINUX_DIR)/\.vermagic#cp \$(TOPDIR)/vermagic \$(LINUX_DIR)/.vermagic#g' include/kernel-defaults.mk
-
-# init openwrt config
-rm -rf tmp/*
      
 # install feeds
 ./scripts/feeds update -a
 ./scripts/feeds install -a
+
