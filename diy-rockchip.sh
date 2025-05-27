@@ -272,6 +272,10 @@ curl -so files/bin/ZeroWrt $mirror/openwrt/files/bin/ZeroWrt
 chmod +x files/bin/ZeroWrt
 chmod +x files/root/version.txt
 
+# key-build.pub
+curl -so files/root/key-build.pub $mirror/openwrt/files/root/key-build.pub
+chmod +x files/root/key-build.pub
+
 # NTP
 sed -i 's/0.openwrt.pool.ntp.org/ntp1.aliyun.com/g' package/base-files/files/bin/config_generate
 sed -i 's/1.openwrt.pool.ntp.org/ntp2.aliyun.com/g' package/base-files/files/bin/config_generate
@@ -299,6 +303,10 @@ EOF
 # 加入作者信息
 sed -i "s/DISTRIB_DESCRIPTION='*.*'/DISTRIB_DESCRIPTION='ZeroWrt-$(date +%Y%m%d)'/g"  package/base-files/files/etc/openwrt_release
 sed -i "s/DISTRIB_REVISION='*.*'/DISTRIB_REVISION=' By OPPEN321'/g" package/base-files/files/etc/openwrt_release
+
+# CURRENT_DATE
+sed -i "/BUILD_DATE/d" package/base-files/files/usr/lib/os-release
+sed -i "/BUILD_ID/aBUILD_DATE=\"$CURRENT_DATE\"" package/base-files/files/usr/lib/os-release
 
 # golang 1.24
 rm -rf feeds/packages/lang/golang
@@ -369,6 +377,10 @@ sed -i 's/syslog/none/g' feeds/packages/admin/netdata/files/netdata.conf
 
 # Mosdns
 git clone https://$github/sbwml/luci-app-mosdns -b v5 package/new/mosdns
+
+# luci-app-sqm
+rm -rf feeds/luci/applications/luci-app-sqm
+git clone https://$github/zhiern/luci-app-sqm feeds/luci/applications/luci-app-sqm
 
 # OpenAppFilter
 git clone https://$github/sbwml/OpenAppFilter --depth=1 package/new/OpenAppFilter
