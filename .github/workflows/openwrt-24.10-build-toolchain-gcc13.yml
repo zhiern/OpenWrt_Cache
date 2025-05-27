@@ -66,6 +66,8 @@ jobs:
         df -hT $GITHUB_WORKSPACE
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         curl -o ./openwrt/feeds.conf.default https://script.kejizero.online/Customize/feeds/feeds.conf.default
+        cd openwrt
+        echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
 
     - name: Generate Variables
       run: |
