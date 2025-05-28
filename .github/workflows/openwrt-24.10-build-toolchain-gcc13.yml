@@ -137,4 +137,4 @@ jobs:
         commit: openwrt-24.10
         replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
-        artifacts: $OPENWRT_PATH/toolchain-cache/*
+        artifacts: openwrt/toolchain-cache/*
