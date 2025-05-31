@@ -123,6 +123,8 @@ jobs:
       id: compile
       run: |
         cd $OPENWRT_PATH
+        export GITEA_USERTNAME=${{ secrets.GITEA_USERTNAME }}
+        export GITEA_PASSWORD=${{ secrets.GITEA_PASSWORD }}
         echo -e "$(nproc) thread compile"
         make -j$cores toolchain/compile || make -j$cores toolchain/compile V=s
         mkdir -p toolchain-cache
